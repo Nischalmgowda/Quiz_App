@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Question</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Add a New Question</h2>
+  <form id="addQuestionForm">
+    <div class="form-group">
+      <label for="questionTitle">Question Title</label>
+      <input type="text" class="form-control" id="questionTitle" required>
+    </div>
+    <div class="form-group">
+      <label for="option1">Option 1</label>
+      <input type="text" class="form-control" id="option1" required>
+    </div>
+    <div class="form-group">
+      <label for="option2">Option 2</label>
+      <input type="text" class="form-control" id="option2" required>
+    </div>
+    <div class="form-group">
+      <label for="option3">Option 3</label>
+      <input type="text" class="form-control" id="option3" required>
+    </div>
+    <div class="form-group">
+      <label for="option4">Option 4</label>
+      <input type="text" class="form-control" id="option4" required>
+    </div>
+    <div class="form-group">
+      <label for="rightAnswer">Correct Answer</label>
+      <input type="text" class="form-control" id="rightAnswer" required>
+    </div>
+    <div class="form-group">
+      <label for="category">Category</label>
+      <input type="text" class="form-control" id="category" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Question</button>
+  </form>
+
+  <!-- Home Button and Total Questions Section -->
+  <div class="mt-4">
+    <button onclick="window.location.href='index.html'" class="btn btn-primary">Home</button>
+    <p>Total Questions: <span id="totalQuestions"></span></p>
+  </div>
+</div>
+
+<script>
+  document.getElementById('addQuestionForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const questionData = {
+      questionTitle: document.getElementById('questionTitle').value,
+      option1: document.getElementById('option1').value,
+      option2: document.getElementById('option2').value,
+      option3: document.getElementById('option3').value,
+      option4: document.getElementById('option4').value,
+      rightAnswer: document.getElementById('rightAnswer').value,
+      category: document.getElementById('category').value
+    };
+
+    fetch('/question/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(questionData)
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert('Question added successfully');
+      document.getElementById('addQuestionForm').reset();
+      // Refresh the total question count after adding a new question
+      fetchTotalQuestions();
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to add question');
+    });
+  });
+
+  // Fetch the total number of questions
+  function fetchTotalQuestions() {
+    fetch('/questions/count')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('totalQuestions').textContent = data.count;
+      })
+      .catch(error => console.error('Error fetching total questions:', error));
+  }
+
+  // Call the function to display the total questions when the page loads
+  fetchTotalQuestions();
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<div class="container mt-5">
+    <h2>Questions by Category</h2>
+    <input type="text" id="categoryInput" placeholder="Enter category">
+    <button onclick="fetchQuestionsByCategory()">Fetch Questions</button>
+    <div id="categoryQuestionsContainer"></div>
+</div>
+
+<script>
+    function fetchQuestionsByCategory() {
+        const category = document.getElementById('categoryInput').value;
+        fetch(`/question/category/${category}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('categoryQuestionsContainer');
+                container.innerHTML = '';
+                data.forEach(question => {
+                    const questionElement = document.createElement('div');
+                    questionElement.innerHTML = `
+                        <h4>${question.title}</h4>
+                        <ul>
+                            <li>${question.option1}</li>
+                            <li>${question.option2}</li>
+                            <li>${question.option3}</li>
+                            <li>${question.option4}</li>
+                        </ul>
+                    `;
+                    container.appendChild(questionElement);
+                });
+            })
+            .catch(error => console.error('Error fetching questions:', error));
+    }
+</script>

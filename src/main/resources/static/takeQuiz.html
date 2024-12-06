@@ -1,0 +1,32 @@
+<div class="container mt-5">
+  <h2>Take a Quiz</h2>
+  <input type="text" id="quizIdInput" placeholder="Enter Quiz ID">
+  <button onclick="fetchQuizQuestions()">Start Quiz</button>
+  <div id="quizContainer"></div>
+</div>
+
+<script>
+    function fetchQuizQuestions() {
+        const quizId = document.getElementById('quizIdInput').value;
+        fetch(`/quiz/get/${quizId}`)
+            .then(response => response.json())
+            .then(data => {
+                const quizContainer = document.getElementById('quizContainer');
+                quizContainer.innerHTML = '';
+                data.forEach((questionWrapper, index) => {
+                    const questionElement = document.createElement('div');
+                    questionElement.innerHTML = `
+                        <h4>Question ${index + 1}: ${questionWrapper.question.title}</h4>
+                        <ul>
+                            <li><input type="radio" name="question${index}" value="${questionWrapper.question.option1}">${questionWrapper.question.option1}</li>
+                            <li><input type="radio" name="question${index}" value="${questionWrapper.question.option2}">${questionWrapper.question.option2}</li>
+                            <li><input type="radio" name="question${index}" value="${questionWrapper.question.option3}">${questionWrapper.question.option3}</li>
+                            <li><input type="radio" name="question${index}" value="${questionWrapper.question.option4}">${questionWrapper.question.option4}</li>
+                        </ul>
+                    `;
+                    quizContainer.appendChild(questionElement);
+                });
+            })
+            .catch(error => console.error('Error fetching quiz questions:', error));
+    }
+</script>
